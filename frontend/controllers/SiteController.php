@@ -13,6 +13,11 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 
+use yii\data\ActiveDataProvider;
+use common\models\tables\Task;
+use common\models\tables\User;
+use yii\caching\DbDependency;
+
 /**
  * Site controller
  */
@@ -25,7 +30,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
@@ -41,7 +46,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -70,9 +75,52 @@ class SiteController extends Controller
      *
      * @return mixed
      */
+//    public function actionIndex()
+//    {
+//        return $this->render('index');
+//    }
     public function actionIndex()
     {
-        return $this->render('index');
+        if (!Yii::$app->user->isGuest) {
+
+            $userId = Yii::$app->user->id;
+            $key = 'task_current_task_' . $userId;
+
+            $cache = Yii::$app->cache;
+
+            $dataProvider = $cache->get($key);
+
+            if (!$dataProvider) {
+
+                $dataProvider = new ActiveDataProvider([
+                    'query' => Task::findCurrentTask(),
+                    'pagination' => [
+                        'pageSize' => 5
+                    ],
+                ]);
+
+                $dependency = new DbDependency();
+                $dependency->sql = "SELECT COUNT(*) FROM task";
+
+                $dataProvider->prepare();
+
+                $cache->set($key, $dataProvider, 3600, $dependency);
+            }
+
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        }
+
+        $model->password = '';
+        return $this->render('login', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -148,20 +196,49 @@ class SiteController extends Controller
      *
      * @return mixed
      */
+//    public function actionSignup()
+//    {
+//        $model = new SignupForm();
+//        if ($model->load(Yii::$app->request->post())) {
+//            if ($user = $model->signup()) {
+//                if (Yii::$app->getUser()->login($user)) {
+//                    return $this->goHome();
+//                }
+//            }
+//        }
+//
+//        return $this->render('signup', [
+//            'model' => $model,
+//        ]);
+//    }
     public function actionSignup()
     {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
-            }
+        // Создать модель и указать ей, что используется сценарий регистрации
+        $model = new User(['scenario' => User::SCENARIO_SIGNUP]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['/']);
         }
 
+        // Вывести форму
         return $this->render('signup', [
-            'model' => $model,
+            'model' => $model
         ]);
+    }
+
+    public function actionSetlanguage()
+    {
+        $session = Yii::$app->session;
+
+        $language = $session->get('langauge');
+        if ($language == 'ru-Ru')
+            $language = 'en-En';
+        else
+            $language = 'ru-Ru';
+
+        $session->set('langauge', $language);
+
+        return $this->goBack(Yii::$app->request->referrer);
     }
 
     /**

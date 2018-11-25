@@ -1,0 +1,14 @@
+.icon-rows{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+.icon-rows a{
+    margin: 10px;
+}
+
+.icon-rows img {
+    max-width: 100px;
+    max-height: 100px;
+}
