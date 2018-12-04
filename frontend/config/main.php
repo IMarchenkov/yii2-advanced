@@ -11,6 +11,9 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'aliases' => [
+        '@upload'=> '@frontend/web/upload',
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf',
@@ -45,10 +48,12 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'task/' => 'task/index',
-                'task/<id:\d+>' => 'task/view',
-                'task/update/<id:\d+>' => 'task/update',
-                'task/delete/<id:\d+>' => 'task/delete'
+                '/project/<id:\d>' => 'project/view',
+                '/task/' => 'task/index',
+                '<project_id:\d+>/task/create' => 'task/create',
+                '<project_id:\d+>/task/<id:\d+>' => 'task/view',
+                '<project_id:\d+>/task/update/<id:\d+>' => 'task/update',
+                '<project_id:\d+>/task/delete/<id:\d+>' => 'task/delete'
             ],
         ],
     ],

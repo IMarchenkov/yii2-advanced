@@ -155,4 +155,12 @@ class Task extends \yii\db\ActiveRecord
             ->andWhere(['=', 'date_end', date('Y-m-d', strtotime('+1 days'))])
             ->all();
     }
+
+    public function getUsedUsersId()
+    {
+        return array_unique([
+            $this->initiator_id,
+            $this->responsible_id
+        ]);
+    }
 }

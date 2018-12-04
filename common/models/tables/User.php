@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $role_id
+ * @property integer $telegram_id
  *
  * @property Role $role
  * @property string $password_repeat
@@ -80,6 +81,7 @@ class User extends ActiveRecord
             ['password', 'compare', 'compareAttribute' => 'password_repeat', 'on' => self::SCENARIO_SIGNUP],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['telegram_id', 'integer'],
         ];
     }
 
@@ -94,7 +96,8 @@ class User extends ActiveRecord
             'password' => 'Password',
             'password_repeat' => 'Repeat password',
             'role_id' => 'Role ID',
-            'email' => 'Email'
+            'email' => 'Email',
+            'telegram_id' => 'Telegram id'
         ];
     }
 

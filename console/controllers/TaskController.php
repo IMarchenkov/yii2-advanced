@@ -1,6 +1,6 @@
 <?php
 
-namespace console\commands;
+namespace console\controllers;
 
 use common\models\tables\Task;
 use yii\console\ExitCode;
