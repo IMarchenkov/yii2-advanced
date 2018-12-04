@@ -1,10 +1,29 @@
+.project-title {
+    font-size: 24px;
+    color: #0a0a0a;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 20px;
+}
+.project-block {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
 .task-unit {
+    height: 100px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-around;
     border: 2px solid #5fa0de;
     border-radius: 4em/8em;
     margin-bottom: 5px;
-    padding: 10px 24px;
-    width: 400px;
+    margin-right: 5px;
+    padding: 5px 10px;
+    width: 250px;
     box-shadow: 5px 5px 7px 0px #8692b3;
+    font-size: 12px;
 }
 
 .task-date{

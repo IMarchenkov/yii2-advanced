@@ -8,6 +8,7 @@ use frontend\assets\TaskAsset;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\search\TaskSearch */
+/* @var $modelProject common\models\tables\Project */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Task';
@@ -16,13 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 TaskAsset::register($this);
 ?>
 <div class="tasks-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <h2><?= Html::encode($this->title) ?></h2>
 
     <p>
-        <?= Html::a(Yii::t('app', 'create'), ['create'], ['class' => 'btn btn-success']) ?>
+        <? /* Html::a(Yii::t('app', 'create'), ['create', 'project_id' => $model->project_id], ['class' => 'btn btn-success']) */ ?>
     </p>
 
     <?= ListView::widget([
@@ -30,10 +28,9 @@ TaskAsset::register($this);
         'itemView' => '_unit',
         'viewParams' => [
             'listView' => true,
+            'modelProject' => $modelProject
         ]
     ]);
-
     ?>
 
-    <?php Pjax::end(); ?>
 </div>

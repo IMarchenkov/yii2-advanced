@@ -54,6 +54,7 @@ class User extends ActiveRecord
     public function beforeSave($insert) {
         if ($this->password) {
             $this->setPassword($this->password);
+            $this->generateAuthKey();
         }
         return parent::beforeSave($insert);
     }

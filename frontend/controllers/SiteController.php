@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\controllers;
 
 use Yii;
@@ -16,6 +17,7 @@ use frontend\models\ContactForm;
 use yii\data\ActiveDataProvider;
 use common\models\tables\Task;
 use common\models\tables\User;
+use common\models\tables\Project;
 use yii\caching\DbDependency;
 
 /**
@@ -81,6 +83,7 @@ class SiteController extends Controller
 //    }
     public function actionIndex()
     {
+        Yii::$app->cache->flush();
         if (!Yii::$app->user->isGuest) {
 
             $userId = Yii::$app->user->id;
@@ -93,14 +96,14 @@ class SiteController extends Controller
             if (!$dataProvider) {
 
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Task::findCurrentTask(),
-                    'pagination' => [
-                        'pageSize' => 5
-                    ],
+                    'query' => Project::findCurrentTask(),
+//                    'pagination' => [
+//                        'pageSize' => 5
+//                    ],
                 ]);
 
                 $dependency = new DbDependency();
-                $dependency->sql = "SELECT COUNT(*) FROM task";
+                $dependency->sql = "SELECT COUNT(*) FROM task WHERE initiator_id = " . Yii::$app->user->id . " OR responsible_id = " . Yii::$app->user->id;
 
                 $dataProvider->prepare();
 

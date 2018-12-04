@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\models\tables\User;
 use common\models\tables\File;
+use common\models\tables\Project;
 use Yii;
 use common\models\tables\Task;
 use common\models\search\TaskSearch;
@@ -32,6 +34,7 @@ class TaskController extends Controller
 
     /**
      * Lists all Task models.
+     * @param integer $project_id
      * @return mixed
      */
 //    public function actionIndex()
@@ -47,19 +50,20 @@ class TaskController extends Controller
 
     public function actionIndex()
     {
-        $model = new Task();
+        $model = new Project();
         $query = $model::find()
-//            ->where(['>', 'date', date('Y-m-d H:i:s')])
-//            ->andWhere(['<', 'date', date('Y-m-d H:i:s', strtotime('+1 month'))])
-            ->andWhere(['user_id' => Yii::$app->user->id]);
+            ->joinWith('tasks')
+            ->orWhere(['task.initiator_id' => Yii::$app->user->id])
+            ->orWhere(['task.responsible_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 5
+                'pageSize' => 5  // как сделать чтобы пагинация работала именно по проектам?
             ],
         ]);
-        return $this->render('index', [
+
+        return $this->render('//site/index', [
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -67,26 +71,40 @@ class TaskController extends Controller
     /**
      * Displays a single Task model.
      * @param integer $id
+     * @param integer $project_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($project_id, $id)
     {
+        $modelFile = new File();
+        $modelProject = Project::findOne($project_id);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'listView' => false,
+            'modelFile' => $modelFile,
+            'modelProject' => $modelProject
         ]);
     }
 
     /**
      * Creates a new Task model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $project_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($project_id)
     {
         $model = new Task();
         $modelFile = new File();
+        $modelProject = Project::findOne($project_id);
+        $modelUsers = User::find()->select(['id', 'username'])->all();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->project_id = $project_id;
+            $model->initiator_id = Yii::$app->user->id;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -97,12 +115,14 @@ class TaskController extends Controller
             }
 
 
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id, 'project_id' => $model->project_id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'modelFile' => $modelFile
+            'modelUsers' => $modelUsers,
+            'modelFile' => $modelFile,
+            'modelProject' => $modelProject
         ]);
     }
 
@@ -110,13 +130,16 @@ class TaskController extends Controller
      * Updates an existing Task model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @param integer $project_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($project_id, $id)
     {
         $model = $this->findModel($id);
         $modelFile = new File();
+        $modelUsers = User::find()->select(['id', 'username'])->all();
+        $modelProject = Project::findOne($project_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -126,12 +149,14 @@ class TaskController extends Controller
                 $modelFile = new File();
             }
             //TODO delete old File
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['project_id' => $project_id, 'view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'modelFile' => $modelFile
+            'modelUsers' => $modelUsers,
+            'modelFile' => $modelFile,
+            'modelProject' => $modelProject
         ]);
     }
 

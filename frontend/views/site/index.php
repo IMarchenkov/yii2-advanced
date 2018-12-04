@@ -19,18 +19,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'create'), ['task/create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Start new project'), ['project/create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?= ListView::widget([
-        'dataProvider' => $dataProvider,
-        'itemView' => 'unit',
-        'viewParams' => [
-            'listView' => true,
-        ]
-    ]);
-
-    ?>
+<?php //var_dump($dataProvider); die();?>
+        <?= ListView::widget([
+            'dataProvider' => $dataProvider,
+            'itemView' => '_project_unit',
+            'viewParams' => [
+                'listView' => true,
+            ]
+        ]);
+        ?>
 
     <?php Pjax::end(); ?>
 </div>
