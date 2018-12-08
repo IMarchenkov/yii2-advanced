@@ -52,7 +52,7 @@ class TaskController extends Controller
     {
         $model = new Project();
         $query = $model::find()
-            ->joinWith('tasks')
+            ->joinWith('task')
             ->orWhere(['task.initiator_id' => Yii::$app->user->id])
             ->orWhere(['task.responsible_id' => Yii::$app->user->id]);
 

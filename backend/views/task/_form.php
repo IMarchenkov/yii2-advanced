@@ -12,7 +12,7 @@ use \common\models\tables\User;
 <div class="tasks-form">
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php $users = Users::find()->select(['id', 'username'])->all(); ?>
+    <?php $users = User::find()->select(['id', 'username'])->all(); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

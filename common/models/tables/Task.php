@@ -156,6 +156,14 @@ class Task extends \yii\db\ActiveRecord
             ->all();
     }
 
+    public static function getTaskByUserId()
+    {
+        return self::find()
+            ->andFilterWhere(['or', ['=', 'responsible_id', Yii::$app->user->id],
+                ['=', 'initiator_id', Yii::$app->user->id]])
+            ->all();
+    }
+
     public function getUsedUsersId()
     {
         return array_unique([

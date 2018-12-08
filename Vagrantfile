@@ -8,7 +8,8 @@ end
 
 domains = {
   frontend: 'front.task.local',
-  backend:  'back.task.local'
+  backend:  'back.task.local',
+  api: 'api.task.local'
 }
 
 config = {
@@ -52,6 +53,7 @@ Vagrant.configure(2) do |config|
 
   # network settings
   config.vm.network 'private_network', ip: options['ip']
+  config.vm.network "forwarded_port", guest: 8001, host: 18000
 
   # sync: folder 'yii2-app-advanced' (host machine) -> folder '/app' (guest machine)
   config.vm.synced_folder './', '/app', owner: 'vagrant', group: 'vagrant'

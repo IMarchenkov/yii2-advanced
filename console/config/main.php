@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'chat'],
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -32,4 +32,9 @@ return [
         ],
     ],
     'params' => $params,
+    'modules' => [
+        'chat' => [
+            'class' => 'common\modules\chat\Chat'
+        ],
+    ]
 ];
