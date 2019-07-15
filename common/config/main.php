@@ -18,9 +18,4 @@ return [
             'class' => common\components\events\EventsComponent::class
         ],
     ],
-    'modules' => [
-        'chat' => [
-            'class' => 'common\modules\chat\Chat'
-        ],
-    ]
 ];
